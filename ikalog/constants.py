@@ -48,6 +48,14 @@ modes_v2 = {
     'hoko': {'ja': 'ガチホコバトル', 'en': 'Rainmaker', },
     'asari': {'ja': 'ガチアサリ', 'en': 'Clam Blitz', },
 }
+modes_v3 = {
+    'tricolor': {'ja': 'トリカラバトル', 'en': 'Tricolor Turf War', },
+    'nawabari': {'ja': 'ナワバリバトル', 'en': 'Turf War', },
+    'area': {'ja': 'ガチエリア', 'en': 'Splat Zones', },
+    'yagura': {'ja': 'ガチヤグラ', 'en': 'Tower Control', },
+    'hoko': {'ja': 'ガチホコバトル', 'en': 'Rainmaker', },
+    'asari': {'ja': 'ガチアサリ', 'en': 'Clam Blitz', },
+}
 rules = modes_v2 # backward compatiblity
 
 weapons = {
