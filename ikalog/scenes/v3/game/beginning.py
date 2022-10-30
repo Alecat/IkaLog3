@@ -3,7 +3,7 @@
 #
 #  IkaLog
 #  ======
-#  Copyright (C) 2017 Takeshi HASEGAWA
+#  Copyright (C) 2022 Takeshi HASEGAWA
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -29,21 +29,32 @@ from ikalog.utils import *
 logger = logging.getLogger()
 
 
-class Spl3GameWeapons(StatefulScene):
+class Spl3GameBeginning(StatefulScene):
     """
-    Detect weapon types
+    Detect Beginning of the match.
     """
 
     def reset(self):
-        super(Spl3GameWeapons, self).reset()
+        super(Spl3GameBeginning, self).reset()
 
     # event handlers
-    def on_game_beginning(self, context, params):
-        if self._state != self._state_default:
+    def on_game_timer_detected(self, context, params):
+        self._switch_state(self._state_waiting)
+
+    def on_game_timer_update(self, context, params):
+        if self._state != self._state_waiting:
+            return
+        print("UPDATE", params)
+        cond_timer_value = params['time_remaining'] in ('3:00', '5:00')
+
+        if (cond_timer_value):
+            self._call_plugins('on_game_beginning', params)
+            self._switch_state(self._state_wait_for_timeout)
             return
 
-        self.detect_weapons(context)
-        self._switch_state(self._state_wait_for_timeout)
+        else:
+            self._switch_state(self._state_wait_for_timeout)
+            return
 
     def on_game_timer_reset(self, context, params):
         self.reset()
@@ -57,17 +68,17 @@ class Spl3GameWeapons(StatefulScene):
         """
         return False
 
+    def _state_waiting(self, context):
+        """
+        Timer Detected, waiting for next timer update
+        """
+        return False
+
     def _state_wait_for_timeout(self, context):
         """
         Match on-going. Stay in this state until a match ends.
         """
         return False
-
-    def detect_weapons(self, context):
-        filename = 'screenshots/weapon_detect.%s.png' % time.time()
-
-        cv2.imwrite(filename, context['engine']['frame'])
-        logger.info("Weapon detection performed")
 
     def dump(self, context):
         pass
@@ -80,4 +91,4 @@ class Spl3GameWeapons(StatefulScene):
 
 
 if __name__ == "__main__":
-    Spl3GameWeapons.main_func()
+    Spl3GameBeginning.main_func()
